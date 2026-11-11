@@ -2,8 +2,9 @@
 
 Idioma: Español | [English](README.en.md)
 
-Candidato: Agustin Villarauz. Inicio del laboratorio: 4 de noviembre de 2026.
-Estado: borrador verificado parcialmente, pendiente de capturas y revisión final.
+Candidato: Agustin Villarauz  
+Inicio del laboratorio: 4 de noviembre de 2026  
+Estado: implementación del laboratorio y análisis del PCAP documentados. Se incluyen capturas de NGINX, Grafana y Wireshark. Los límites de verificación y reproducibilidad se indican a continuación.
 
 ## 1. Objetivo y alcance
 
