@@ -35,10 +35,34 @@ Se eligió infraestructura local para evitar reabrir una cuenta de nube con fact
 El clúster consta de un servidor K3s y un agente. Esta configuración no ofrece alta disponibilidad del plano de control.
 
 ### Distribución de nodos y redes
+
 | Nodo | Estado observado | IP interna | IP NAT | Interfaz privada | Subred de pods |
 |---|---|---|---|---|---|
+| k3s-server-01 | Ready | 192.168.175.10 | 192.168.138.128 | ens34 | 10.42.0.0/24 |
+| k3s-worker-01 | Ready | 192.168.175.11 | 192.168.138.131 | ens37 | 10.42.1.0/24 |
 
-Se observaron rutas hacia las subredes remotas de pods mediante `flannel.1`. La inspección de rutas no se consideró una prueba activa de conectividad.
+```text
+Windows host / VMware Workstation Pro
+├── VMnet8 NAT: 192.168.138.0/24 — gateway 192.168.138.2
+│   ├── server ens33: 192.168.138.128
+│   └── worker ens33: 192.168.138.131
+└── VMnet1 host-only: 192.168.175.0/24
+    ├── server ens34: 192.168.175.10
+    └── worker ens37: 192.168.175.11
+```
+
+En ambos nodos se registraron las siguientes versiones reportadas:
+
+- Ubuntu `24.04.5 LTS`.
+- K3s `v1.37.2+k3s1`.
+- Kernel `6.8.0-147-generic`.
+- containerd `2.3.7-k3s1`.
+
+Estos valores fueron transcritos de la salida de terminal del laboratorio; no se comprobaron de forma independiente contra los registros de versiones publicados por los proyectos.
+
+La ruta por defecto utiliza `ens33` mediante la red NAT. Las interfaces host-only no tienen puerta de enlace por defecto.
+
+Los parámetros `node-ip` y `flannel-iface` de K3s seleccionan las direcciones e interfaces privadas de los nodos. Se observaron rutas hacia las subredes remotas de pods mediante `flannel.1`. La inspección de rutas no se consideró una prueba activa de conectividad.
 
 ## 3. Despliegue de K3s: pasos de implementación y evidencias
 
