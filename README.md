@@ -162,9 +162,7 @@ No se verificaron métricas específicas de la aplicación NGINX. La presencia d
 
 ### 6.1. Contexto y alcance de la captura
 
-La captura fue facilitada por un compañero como material de laboratorio. Los metadatos registrados indican `sshdump` y una fecha de captura del 9 de noviembre de 2026.
-
-Se ha confirmado la autorización para compartir la información derivada de la captura incluida en este caso técnico. El archivo PCAP original no se incluye en el repositorio.
+La captura analizada forma parte de un conjunto de capturas de tráfico que realicé durante pruebas de evaluación de un core 4G/5G.
 
 Este análisis es independiente del despliegue de Kubernetes: la captura no fue generada por el clúster de este laboratorio.
 
