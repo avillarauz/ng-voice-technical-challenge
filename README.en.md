@@ -145,20 +145,7 @@ Run on the server after reviewing the referenced manifests:
 sudo kubectl apply -f manifests/lab-web.yaml
 
 helm repo add prometheus-community \
-  sudo kubectl apply -f manifests/lab-web.yaml
-
-helm repo add prometheus-community \
-  https://prometheus-community.github.io/helm-charts
-
-helm repo update
-
-sudo helm --kubeconfig /etc/rancher/k3s/k3s.yaml \
-  upgrade --install monitoring \
-  prometheus-community/kube-prometheus-stack \
-  --version 93.1.1 \
-  --namespace monitoring \
-  --create-namespace \
-  -f manifests/monitoring-values.yaml
+  [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
 
 helm repo update
 
