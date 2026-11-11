@@ -92,7 +92,6 @@ The sequence above summarizes the implementation performed. The exact historical
 
 Reference configuration files document observed non-secret settings only; they do not constitute a complete automated installation procedure. No join token or kubeconfig is included in the submission.
 
-The originally planned resources were 2 vCPU, 4 GB RAM, and 40 GB disk per VM. Final VM resource allocations and the installation ISO checksum remain unverified.
 
 ## 4. NGINX Application and Monitoring
 
