@@ -286,6 +286,7 @@ Filtro de tramas seleccionadas, incluidos mensajes de registro y de llamada:
 ```text
 frame.number in {127, 172, 887, 914, 958, 969, 977, 1334, 1347, 2331, 2338, 3998, 4009}
 ```
+
 #### Vista general de los mensajes seleccionados
 
 ![Lista de paquetes seleccionados para el análisis IMS y SIP](assets/screenshots/ims-call-sequence.png)
