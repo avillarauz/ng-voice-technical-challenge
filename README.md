@@ -48,12 +48,13 @@ Para repetir el montaje: crear las dos VM, verificar sus recursos e interfaces, 
 ## 4. Aplicación NGINX y monitorización
 
 ### 4.1. Aplicación NGINX
-`lab-web` usa `nginx:stable-alpine`, una réplica, seleccionada en el worker. Solicita 50m CPU y 32Mi RAM; limita 250m y 128Mi. El servicio NodePort publica 30080 hacia el puerto HTTP 80. El manifiesto no declara probes ni volúmenes de aplicación.
 
-La aplicación se consultó desde el navegador del host mediante
+`lab-web` usa `nginx:stable-alpine`, con una réplica seleccionada en el worker. Solicita 50m CPU y 32Mi RAM; tiene límites de 250m CPU y 128Mi RAM. El servicio NodePort publica el puerto 30080 hacia el puerto HTTP 80. El manifiesto no declara probes ni volúmenes de aplicación.
+
+La aplicación se consultó desde el navegador del host mediante:
 `http://192.168.175.10:30080`.
 
-![Acceso a NGINX desde el host mediante NodePort](assets/screenshots/Nginx.png)
+![Acceso a NGINX desde el host mediante NodePort](assets/screenshots/nginx.png)
 
 
 ### 4.2. Monitorización
