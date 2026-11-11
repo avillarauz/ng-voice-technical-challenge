@@ -166,6 +166,12 @@ El INVITE posterior utiliza esa identidad y esa ruta.
 
 La información de `Path` conserva una ruta hacia el contacto registrado, mientras que `Service-Route` informa el encaminamiento de las solicitudes originadas por el terminal.
 
+#### Evidencia del registro
+
+![Respuesta SIP al REGISTER en la trama 172](assets/screenshots/ims-registration.png)
+
+La captura muestra la respuesta al REGISTER de la trama 172 y las cabeceras utilizadas para analizar la validez del registro, la identidad asociada y el encaminamiento.
+
 ### 6.5. SDP y precondiciones
 
 UE-A ofrece EVS, AMR-WB, AMR y eventos telefónicos, y anuncia recepción en `10.12.109.183:50030`.
@@ -185,6 +191,12 @@ La secuencia de precondiciones observada es:
 5. Después aparecen `180 Ringing`, la respuesta final `200 OK` al INVITE, el ACK y el intercambio BYE/200 de liberación.
 
 El `200 OK` al UPDATE confirma esa transacción UPDATE; no constituye la aceptación final del INVITE.
+
+#### Evidencia de las precondiciones de QoS
+
+![Estados de QoS en el SDP de la respuesta al UPDATE, trama 969](assets/screenshots/ims-qos-preconditions.png)
+
+La captura muestra el SDP de la respuesta al UPDATE en la trama 969, con los estados actuales de QoS local y remoto en `sendrecv`, desde la perspectiva de UE-B. Esto documenta el estado anunciado en la señalización, no una prueba del tráfico RTP.
 
 ### 6.6. Paquetes de demostración
 
@@ -214,6 +226,11 @@ Filtro de tramas seleccionadas, incluidos mensajes de registro y de llamada:
 ```text
 frame.number in {127, 172, 887, 914, 958, 969, 977, 1334, 1347, 2331, 2338, 3998, 4009}
 ```
+#### Vista general de los mensajes seleccionados
+
+![Lista de paquetes seleccionados para el análisis IMS y SIP](assets/screenshots/ims-call-sequence.png)
+
+La lista filtrada reúne los mensajes seleccionados de registro y llamada, permitiendo seguir la secuencia descrita en la tabla anterior. Se muestran paquetes seleccionados, no todos los mensajes de la captura.
 
 ### 6.7. Resultados y limitaciones del análisis
 

@@ -256,6 +256,12 @@ The later INVITE uses that identity and route.
 
 The `Path` information preserves a route towards the registered contact, while `Service-Route` informs routing for requests originating from the terminal.
 
+#### Registration Evidence
+
+![SIP response to REGISTER in frame 172](assets/screenshots/ims-registration.png)
+
+The screenshot shows the response to REGISTER in frame 172 and the headers used to analyze the registration lifetime, associated identity, and routing.
+
 ### 6.5. SDP and Preconditions
 
 UE-A offers EVS, AMR-WB, AMR, and telephone events, advertising reception at `10.12.109.183:50030`.
@@ -275,6 +281,12 @@ The observed precondition sequence is:
 5. This is followed by `180 Ringing`, the final `200 OK` response to INVITE, ACK, and the BYE/200 release exchange.
 
 The `200 OK` response to UPDATE acknowledges that UPDATE transaction; it is not the final acceptance of the INVITE.
+
+#### QoS Preconditions Evidence
+
+![QoS states in the SDP of the response to UPDATE, frame 969](assets/screenshots/ims-qos-preconditions.png)
+
+The screenshot shows the SDP of the response to UPDATE in frame 969, with the current local and remote QoS states set to `sendrecv` from UE-B's perspective. This documents the state advertised in signalling, not a validation of RTP traffic.
 
 ### 6.6. Demonstration Packets
 
@@ -304,6 +316,11 @@ Selected-frame display filter, including registration and call messages:
 ```text
 frame.number in {127, 172, 887, 914, 958, 969, 977, 1334, 1347, 2331, 2338, 3998, 4009}
 ```
+#### Overview of Selected Messages
+
+![Selected packet list for the IMS and SIP analysis](assets/screenshots/ims-call-sequence.png)
+
+The filtered list brings together the selected registration and call messages, allowing the sequence described in the preceding table to be followed. It shows selected packets, not every message in the capture.
 
 ### 6.7. Findings and Analysis Limits
 
