@@ -80,9 +80,9 @@ El laboratorio se implementó siguiendo esta secuencia:
 
 6. Se verificó que ambos nodos reportaran `Ready`, se inspeccionaron sus direcciones internas y se revisaron las rutas hacia las subredes remotas de pods. La inspección de rutas no se consideró una prueba activa de conectividad.
 
-7. Se desplegaron NGINX y la plataforma de monitorización mediante los manifiestos y la configuración de Helm descritos en la sección 4.
+7. Se desplegaron NGINX y la plataforma de monitoreo mediante los manifiestos y la configuración de Helm descritos en la sección 4.
 
-8. Se inspeccionaron los nodos, pods, servicios, solicitudes de volumen persistente y la release de monitorización mediante los comandos de validación de la sección 5.
+8. Se inspeccionaron los nodos, pods, servicios, solicitudes de volumen persistente y la release de monitoreo mediante los comandos de validación de la sección 5.
 
 9. Se accedió a NGINX y Grafana desde el navegador del host Windows mediante sus servicios NodePort. Las capturas se incluyen en la sección 4.
 
@@ -94,7 +94,7 @@ Los archivos de configuración de referencia documentan únicamente parámetros 
 
 Los recursos previstos originalmente eran 2 vCPU, 4 GB RAM y 40 GB de disco por VM. La asignación final de recursos y el checksum del ISO de instalación siguen sin verificarse.
 
-## 4. Aplicación NGINX y monitorización
+## 4. Aplicación NGINX y monitoreo
 
 ### 4.1. Aplicación NGINX
 
