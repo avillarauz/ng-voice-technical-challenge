@@ -8,7 +8,15 @@ Estado: implementación del laboratorio y análisis del PCAP documentados. Se in
 
 ## 1. Objetivo y alcance
 
-Construir un clúster Kubernetes, desplegar una aplicación y explicar un caso telecom en Wireshark. Se utiliza un laboratorio local de VM, permitido por el reto. 
+Este caso técnico documenta tres tareas:
+
+1. Construir un clúster Kubernetes.
+2. Desplegar una aplicación y validar su acceso.
+3. Analizar y explicar una captura de tráfico de telecomunicaciones mediante Wireshark.
+
+El reto permite utilizar máquinas virtuales locales. Por ello, la infraestructura se implementó localmente con VMware y K3s.
+
+El análisis del PCAP es independiente del despliegue de Kubernetes. La captura no fue generada por este clúster y el despliegue de una plataforma IMS quedó fuera del alcance de esta implementación. 
 
 ## 2. Entorno y arquitectura
 
