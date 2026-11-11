@@ -156,7 +156,9 @@ El candidato confirmó acceso desde Windows después del encendido a lab-web y G
 - Aplicación: `http://192.168.175.10:30080`
 - Grafana: `http://192.168.175.10:30030`
 
-Pendiente de la comprobación final: repetir ambos accesos y guardar capturas. No se documenta una validación de métricas de aplicación NGINX: la presencia del stack no prueba que exista un exporter de NGINX configurado.
+Las capturas de acceso a NGINX y Grafana se incluyen en la sección 4. El alcance de la validación se limita a las observaciones documentadas aquí.
+
+No se verificaron métricas específicas de la aplicación NGINX. La presencia de la plataforma de monitorización, por sí sola, no demuestra que exista un exporter de NGINX configurado.
 
 ## 6. Análisis IMS / SIP sobre acceso 5G
 
