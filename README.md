@@ -20,39 +20,55 @@ El análisis del PCAP es independiente del despliegue de Kubernetes. La captura 
 
 ## 2. Entorno y arquitectura
 
-Host reportado: Windows 10 Home build 19045,
-                 Intel Core i9-9900K, 64 GB RAM,
-                 VMware Workstation Pro 26.0.1.25688693.
+### Entorno del host
 
-Se eligió infraestructura local para evitar cobros en este demo.
-El diseño tiene un servidor K3s y un agente; no ofrece alta disponibilidad.
+La configuración reportada del host es:
 
-| Node | Status | Internal IP | NAT IP | Private interface | Pod subnet |
+- Windows 10 Home, build 19045.
+- Intel Core i9-9900K.
+- 64 GB RAM.
+- Dos SSD Samsung 970 EVO, cada uno con aproximadamente 932 GB de capacidad reportada. Estas cifras corresponden a capacidad, no a espacio libre.
+- VMware Workstation Pro `26.0.1.25688693`.
+
+Se eligió infraestructura local para evitar reabrir una cuenta de nube con facturación.
+
+El clúster consta de un servidor K3s y un agente. Esta configuración no ofrece alta disponibilidad del plano de control.
+
+### Distribución de nodos y redes
+| Nodo | Estado observado | IP interna | IP NAT | Interfaz privada | Subred de pods |
 |---|---|---|---|---|---|
-| k3s-server-01 | Ready | 192.168.175.10 | 192.168.138.128 | ens34 | 10.42.0.0/24 |
-| k3s-worker-01 | Ready | 192.168.175.11 | 192.168.138.131 | ens37 | 10.42.1.0/24 |
 
-```text
-Windows host / VMware Workstation Pro
-├── VMnet8 NAT: 192.168.138.0/24 — gateway 192.168.138.2
-│   ├── server ens33: 192.168.138.128
-│   └── worker ens33: 192.168.138.131
-└── VMnet1 host-only: 192.168.175.0/24
-    ├── server ens34: 192.168.175.10
-    └── worker ens37: 192.168.175.11
-```
+Se observaron rutas hacia las subredes remotas de pods mediante `flannel.1`. La inspección de rutas no se consideró una prueba activa de conectividad.
 
-Ambos nodos reportan Ubuntu 24.04.5 LTS, K3s `v1.37.2+k3s1`, kernel `6.8.0-147-generic` y containerd `2.3.7-k3s1`. Son valores transcritos de la terminal, no una validación independiente de publicaciones upstream.
+## 3. Despliegue de K3s: pasos de implementación y evidencias
 
-La ruta por defecto utiliza ens33/NAT. La red host-only no tiene gateway por defecto. K3s fija node-ip y flannel-iface a las interfaces privadas correspondientes. Las rutas muestran comunicación hacia la subred remota mediante flannel.1; esta observación no sustituye un test activo de conectividad.
+El laboratorio se implementó siguiendo esta secuencia:
 
-## 3. Despliegue de K3s: evidencia y reconstrucción
+1. Se crearon dos máquinas virtuales en VMware y se instaló Ubuntu en ambas.
 
-Se instalaron dos VM y se incorporó el agente al servidor. Los comandos históricos exactos de instalación no se recuperaron; no se inventa un registro literal. Los archivos `manifests/k3s-*.reference.yaml` contienen únicamente parámetros no secretos observados, no una instalación completa.
+2. Se configuraron dos interfaces de red en cada VM: una interfaz NAT para conectividad de salida y una interfaz host-only para la comunicación privada entre el host y los nodos.
 
-El diseño original proponía 2 vCPU, 4 GB RAM y 40 GB de disco por VM. La asignación final de hardware y el checksum del ISO siguen pendientes de comprobar y no se presentan como evidencia confirmada.
+3. Se asignaron las direcciones privadas `192.168.175.10` al servidor y `192.168.175.11` al worker. Se mantuvo la ruta por defecto en la interfaz NAT, sin configurar una puerta de enlace por defecto en las interfaces host-only.
 
-Para repetir el montaje: crear las dos VM, verificar sus recursos e interfaces, configurar NAT y host-only, instalar una versión K3s disponible y validada, configurar la IP y la interfaz privada, y unir el agente mediante un token gestionado fuera del repositorio. No se incluyen tokens ni kubeconfig. Antes de ejecutar comandos de instalación debe cerrarse esa sección con el registro real o una reconstrucción probada.
+4. Se instaló el servidor K3s en `k3s-server-01`, configurando su dirección privada y seleccionando la interfaz host-only para la red de Flannel.
+
+5. Se instaló el agente K3s en `k3s-worker-01` y se incorporó al servidor, configurando la dirección privada y la interfaz host-only del worker.
+
+6. Se verificó que ambos nodos reportaran `Ready`, se inspeccionaron sus direcciones internas y se revisaron las rutas hacia las subredes remotas de pods. La inspección de rutas no se consideró una prueba activa de conectividad.
+
+7. Se desplegaron NGINX y la plataforma de monitorización mediante los manifiestos y la configuración de Helm descritos en la sección 4.
+
+8. Se inspeccionaron los nodos, pods, servicios, solicitudes de volumen persistente y la release de monitorización mediante los comandos de validación de la sección 5.
+
+9. Se accedió a NGINX y Grafana desde el navegador del host Windows mediante sus servicios NodePort. Las capturas se incluyen en la sección 4.
+
+### Registro de implementación y limitaciones
+
+La secuencia anterior resume la implementación realizada. No se recuperaron los comandos históricos exactos de instalación de K3s e incorporación del agente; por ello, esta sección no se presenta como un procedimiento de instalación desde cero probado.
+
+Los archivos de configuración de referencia documentan únicamente parámetros no secretos observados; no constituyen un procedimiento completo de instalación automatizada. No se incluyen tokens de incorporación ni kubeconfig en la entrega.
+
+Los recursos previstos originalmente eran 2 vCPU, 4 GB RAM y 40 GB de disco por VM. La asignación final de recursos y el checksum del ISO de instalación siguen sin verificarse.
 
 ## 4. Aplicación NGINX y monitorización
 
@@ -77,18 +93,11 @@ Grafana se consultó desde el navegador del host mediante
 ![Vista de Grafana durante la validación del laboratorio](assets/screenshots/grafana.png)
 
 
-### Reconstrucción del despliegue de aplicación
+### 4.3. Comandos de despliegue reconstruidos
 
-Los siguientes comandos se proponen a partir de la configuración previa.
+Los siguientes comandos reflejan la configuración documentada, pero no se probaron nuevamente como una instalación desde cero. Se incluyen como reconstrucción, no como un registro histórico exacto de comandos.
 
-```bash
-# Run on the server; review before executing.
-sudo kubectl apply -f manifests/lab-web.yaml
-
-helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-helm repo update
-sudo helm --kubeconfig /etc/rancher/k3s/k3s.yaml upgrade --install monitoring   prometheus-community/kube-prometheus-stack   --version 93.1.1 --namespace monitoring --create-namespace   -f manifests/monitoring-values.yaml
-```
+Ejecutar en el servidor después de revisar los manifiestos referenciados:
 
 ## 5. Validación y acceso
 
@@ -126,7 +135,9 @@ Los extremos identificados durante el análisis son:
 | UE-A | 10.12.109.183 | 7200001501 |
 | UE-B | 10.12.109.113 | 7200001502 |
 
-La dirección de señalización orientada hacia IMS observada es `10.12.62.58`. Esta dirección no permite, por sí sola, asignar cada función lógica a un servidor físico.
+Las capturas de acceso a NGINX y Grafana se incluyen en la sección 4. El alcance de la validación se limita a las observaciones documentadas aquí.
+
+No se verificaron métricas específicas de la aplicación NGINX. La presencia de la plataforma de monitorización, por sí sola, no demuestra que exista un exporter de NGINX configurado.
 
 ### 6.2. Procedimiento de análisis
 
@@ -255,10 +266,19 @@ Se aplican las siguientes limitaciones:
 - Las observaciones repetidas no se clasifican automáticamente como retransmisiones.
 - Los mensajes de liberación de llamada y eliminación de registro se identificaron en la lista de paquetes, pero no se inspeccionaron sus cabeceras completas.
 
-## 7. Limitaciones y siguientes mejoras
+## 7. Limitaciones y mejoras
 
-Un único servidor y host físico: sin HA. NGINX tiene una réplica y selección fija de nodo. Imagen con etiqueta mutable, sin probes explícitas. Persistencia local sin backup/restauración probados. Acceso HTTP de laboratorio, sin validación de TLS o endurecimiento. El estado de soporte/seguridad del host no se evaluó. Las pruebas después de encendido no demuestran recuperación ante todos los fallos.
+| Área | Limitación actual | Posible mejora |
+|---|---|---|
+| Disponibilidad | Un servidor y un host físico; sin alta disponibilidad | Evaluar varios servidores distribuidos entre dominios de fallo distintos |
+| Resiliencia de la aplicación | Una réplica de NGINX con ubicación fija | Revisar el número de réplicas y las restricciones de planificación |
+| Configuración de la aplicación | Etiqueta de imagen mutable y ausencia de probes explícitas | Fijar la imagen y definir probes apropiadas |
+| Persistencia | Almacenamiento local sin pruebas de backup y restauración | Documentar y probar los procedimientos de recuperación |
+| Seguridad del transporte | Acceso HTTP de laboratorio sin validación de TLS ni endurecimiento | Añadir y validar los controles de seguridad apropiados |
+| Pruebas de recuperación | Se comprobó el acceso después del encendido, pero no una recuperación integral ante fallos | Definir y ejecutar casos de prueba de recuperación |
+| Reproducibilidad | Registro incompleto de los comandos históricos de instalación y de los recursos finales de las VM | Documentar un procedimiento de instalación probado y los recursos definitivos |
 
+No se evaluó el estado de soporte y seguridad del host.
 ## 8. Limpieza opcional — destructiva
 
 No ejecutar durante la demostración. Eliminar la aplicación con `sudo kubectl delete -f manifests/lab-web.yaml` también elimina el namespace definido en ese archivo y puede afectar otros recursos dentro de lab. Desinstalar monitoring requiere revisar antes datos, PVC y política de retención; no se propone eliminación automática de volúmenes. Conservar evidencias y backups antes de limpiar.
