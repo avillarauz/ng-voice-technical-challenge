@@ -320,10 +320,10 @@ Se aplican las siguientes limitaciones:
 | Reproducibilidad | Registro incompleto de los comandos históricos de instalación y de los recursos finales de las VM | Documentar un procedimiento de instalación probado y los recursos definitivos |
 
 No se evaluó el estado de soporte y seguridad del host.
+
 ## 8. Limpieza opcional — destructiva
 
 No ejecutar durante la demostración. Eliminar la aplicación con `sudo kubectl delete -f manifests/lab-web.yaml` también elimina el namespace definido en ese archivo y puede afectar otros recursos dentro de lab. Desinstalar monitoring requiere revisar antes datos, PVC y política de retención; no se propone eliminación automática de volúmenes. Conservar evidencias y backups antes de limpiar.
-
 
 ## Referencias técnicas
 
