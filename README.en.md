@@ -145,7 +145,7 @@ Run on the server after reviewing the referenced manifests:
 sudo kubectl apply -f manifests/lab-web.yaml
 
 helm repo add prometheus-community \
-  [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
+    https://prometheus-community.github.io/helm-charts
 
 helm repo update
 
