@@ -58,8 +58,6 @@ En ambos nodos se registraron las siguientes versiones reportadas:
 - Kernel `6.8.0-147-generic`.
 - containerd `2.3.7-k3s1`.
 
-Estos valores fueron transcritos de la salida de terminal del laboratorio; no se comprobaron de forma independiente contra los registros de versiones publicados por los proyectos.
-
 La ruta por defecto utiliza `ens33` mediante la red NAT. Las interfaces host-only no tienen puerta de enlace por defecto.
 
 Los parámetros `node-ip` y `flannel-iface` de K3s seleccionan las direcciones e interfaces privadas de los nodos. Se observaron rutas hacia las subredes remotas de pods mediante `flannel.1`. La inspección de rutas no se consideró una prueba activa de conectividad.
