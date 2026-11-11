@@ -385,13 +385,6 @@ Preserve required evidence and backups before removing lab resources.
 - NGINX-specific application metrics.
 - English labels within the topology image.
 
-### Delivery Checks
-
-- [ ] Verify that all image and file links render correctly in the repository.
-- [ ] Review both language versions for consistency.
-- [ ] Confirm authorization to share capture-derived identifiers.
-- [ ] Confirm that no secrets, join tokens, kubeconfig, or original PCAP are included.
-- [ ] Confirm that the evaluators can access the repository.
 
 ## Technical References
 
