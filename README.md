@@ -177,9 +177,7 @@ Los extremos identificados durante el análisis son:
 | UE-A | 10.12.109.183 | 7200001501 |
 | UE-B | 10.12.109.113 | 7200001502 |
 
-Las capturas de acceso a NGINX y Grafana se incluyen en la sección 4. El alcance de la validación se limita a las observaciones documentadas aquí.
-
-No se verificaron métricas específicas de la aplicación NGINX. La presencia de la plataforma de monitorización, por sí sola, no demuestra que exista un exporter de NGINX configurado.
+La dirección de señalización orientada hacia IMS observada es `10.12.62.58`. Esta dirección no permite, por sí sola, asignar cada función lógica a un servidor físico.
 
 ### 6.2. Procedimiento de análisis
 
