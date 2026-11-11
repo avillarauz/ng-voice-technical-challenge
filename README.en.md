@@ -4,7 +4,7 @@ Language: [Español](README.md) | English
 
 Candidate: Agustin Villarauz  
 Lab started: November 4, 2026  
-Status: lab implementation and PCAP analysis documented. NGINX and Grafana screenshots included. Known verification and reproducibility limits are stated below.
+Status: lab implementation and PCAP analysis documented. NGINX, Grafana, and Wireshark screenshots included. Known verification and reproducibility limits are stated below.
 
 ## 1. Objective and Scope
 
