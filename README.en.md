@@ -58,8 +58,6 @@ Both nodes were recorded as reporting:
 - Kernel `6.8.0-147-generic`.
 - containerd `2.3.7-k3s1`.
 
-These values were transcribed from the lab's terminal output; they have not been independently checked against upstream release records.
-
 The default route uses `ens33` through the NAT network. The host-only interfaces have no default gateway.
 
 The K3s `node-ip` and `flannel-iface` settings select the private node addresses and interfaces. Routes to remote pod subnets were observed through `flannel.1`. Route inspection alone was not treated as an active connectivity test.
