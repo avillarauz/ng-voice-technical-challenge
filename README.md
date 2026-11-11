@@ -164,7 +164,7 @@ No se verificaron métricas específicas de la aplicación NGINX. La presencia d
 
 La captura analizada forma parte de un conjunto de capturas de tráfico que realicé durante pruebas de evaluación de un core 4G/5G.
 
-El archivo utilizado en este análisis se incluye en el repositorio y se comparte con autorización: [IMS OK with BlinQ gNB1.pcap](./IMS%20OK%20with%20BlinQ%20gNB1.pcapng).
+El archivo utilizado en este análisis se incluye en el repositorio y se comparte con autorización: [IMS OK with BlinQ gNB1.pcapng](./IMS%20OK%20with%20BlinQ%20gNB1.pcapng).
 
 Este análisis es independiente del despliegue de Kubernetes: la captura no fue generada por el clúster de este laboratorio.
 
