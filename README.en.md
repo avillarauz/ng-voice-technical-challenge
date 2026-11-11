@@ -379,25 +379,6 @@ Before uninstalling monitoring, review stored data, PVCs, and retention policies
 
 Preserve required evidence and backups before removing lab resources.
 
-## 9. Submission Contents and Outstanding Checks
-
-### Documented Contents
-
-- Kubernetes architecture and implementation sequence.
-- NGINX deployment configuration and access screenshot.
-- Monitoring configuration and Grafana screenshot.
-- Validation commands and recorded observations.
-- Logical IMS topology and selected SIP/SDP analysis.
-- Explicit implementation and analysis limitations.
-
-### Outstanding Verification
-
-- Final VM resource allocations and installation ISO checksum.
-- Exact historical K3s installation commands or a tested clean-install reconstruction.
-- Full RTP and media-quality analysis.
-- NGINX-specific application metrics.
-- English labels within the topology image.
-
 
 ## Technical References
 
