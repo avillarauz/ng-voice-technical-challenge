@@ -1,0 +1,56 @@
+alertmanager:
+  enabled: false
+grafana:
+  enabled: true
+  replicas: 1
+  nodeSelector:
+    kubernetes.io/hostname: k3s-server-01
+  persistence:
+    enabled: true
+    storageClassName: local-path
+    accessModes: [ReadWriteOnce]
+    size: 1Gi
+  service:
+    type: NodePort
+    nodePort: 30030
+  resources:
+    requests: {cpu: 100m, memory: 128Mi}
+    limits: {cpu: 500m, memory: 384Mi}
+prometheus:
+  service:
+    type: ClusterIP
+  prometheusSpec:
+    replicas: 1
+    nodeSelector:
+      kubernetes.io/hostname: k3s-worker-01
+    evaluationInterval: 30s
+    scrapeInterval: 30s
+    retention: 24h
+    retentionSize: 2GB
+    resources:
+      requests: {cpu: 200m, memory: 512Mi}
+      limits: {cpu: '1', memory: 1Gi}
+    storageSpec:
+      volumeClaimTemplate:
+        spec:
+          accessModes: [ReadWriteOnce]
+          storageClassName: local-path
+          resources:
+            requests:
+              storage: 5Gi
+kube-state-metrics:
+  resources:
+    requests: {cpu: 25m, memory: 64Mi}
+    limits: {cpu: 200m, memory: 192Mi}
+prometheus-node-exporter:
+  resources:
+    requests: {cpu: 25m, memory: 32Mi}
+    limits: {cpu: 100m, memory: 128Mi}
+prometheusOperator:
+  resources:
+    requests: {cpu: 50m, memory: 128Mi}
+    limits: {cpu: 300m, memory: 256Mi}
+kubeControllerManager: {enabled: false}
+kubeEtcd: {enabled: false}
+kubeProxy: {enabled: false}
+kubeScheduler: {enabled: false}
