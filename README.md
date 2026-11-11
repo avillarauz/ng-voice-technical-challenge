@@ -92,8 +92,6 @@ La secuencia anterior resume la implementación realizada. No se recuperaron los
 
 Los archivos de configuración de referencia documentan únicamente parámetros no secretos observados; no constituyen un procedimiento completo de instalación automatizada. No se incluyen tokens de incorporación ni kubeconfig en la entrega.
 
-Los recursos previstos originalmente eran 2 vCPU, 4 GB RAM y 40 GB de disco por VM. La asignación final de recursos y el checksum del ISO de instalación siguen sin verificarse.
-
 ## 4. Aplicación NGINX y monitoreo
 
 ### 4.1. Aplicación NGINX
