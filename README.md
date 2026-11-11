@@ -122,6 +122,22 @@ Grafana se consultó desde el navegador del host mediante
 Los siguientes comandos reflejan la configuración documentada, pero no se probaron nuevamente como una instalación desde cero. Se incluyen como reconstrucción, no como un registro histórico exacto de comandos.
 
 Ejecutar en el servidor después de revisar los manifiestos referenciados:
+```bash
+sudo kubectl apply -f manifests/lab-web.yaml
+
+helm repo add prometheus-community \
+  [https://prometheus-community.github.io/helm-charts](https://prometheus-community.github.io/helm-charts)
+
+helm repo update
+
+sudo helm --kubeconfig /etc/rancher/k3s/k3s.yaml \
+  upgrade --install monitoring \
+  prometheus-community/kube-prometheus-stack \
+  --version 93.1.1 \
+  --namespace monitoring \
+  --create-namespace \
+  -f manifests/monitoring-values.yaml
+```
 
 ## 5. Validación y acceso
 
