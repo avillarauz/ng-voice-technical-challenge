@@ -101,60 +101,132 @@ Pendiente de la comprobación final: repetir ambos accesos y guardar capturas. N
 
 ## 6. Análisis IMS / SIP sobre acceso 5G
 
-Procedencia declarada: captura facilitada por un compañero. Metadatos: sshdump, 9 de noviembre de 2026. Confirmar autorización y nombre exacto del archivo antes de compartirlo. El PCAP original se excluye del repositorio.
+### 6.1. Contexto y alcance de la captura
 
-UE-A: 10.12.109.183, identidad telefónica 7200001501. UE-B: 10.12.109.113, 7200001502. Dirección de señalización IMS observada: 10.12.62.58.
+La captura fue facilitada por un compañero como material de laboratorio. Los metadatos registrados indican `sshdump` y una fecha de captura del 9 de noviembre de 2026.
 
-### Topología lógica
-![Topología lógica de la llamada IMS sobre acceso 5G](assets/diagrams/ims-call-topology.png)
+Se ha confirmado la autorización para compartir la información derivada de la captura incluida en este caso técnico. El archivo PCAP original no se incluye en el repositorio.
 
-*Las cajas representan funciones lógicas, no necesariamente servidores físicos distintos. El diagrama diferencia la evidencia observada en el PCAP de los elementos incluidos como contexto arquitectónico.*
+Este análisis es independiente del despliegue de Kubernetes: la captura no fue generada por el clúster de este laboratorio.
+
+Los extremos identificados durante el análisis son:
+
+| Función | Dirección IP | Identidad telefónica |
+|---|---|---|
+| UE-A | 10.12.109.183 | 7200001501 |
+| UE-B | 10.12.109.113 | 7200001502 |
+
+La dirección de señalización orientada hacia IMS observada es `10.12.62.58`. Esta dirección no permite, por sí sola, asignar cada función lógica a un servidor físico.
+
+### 6.2. Procedimiento de análisis
+
+El análisis siguió esta secuencia:
+
+1. Identificar el intercambio de registro e inspeccionar los tiempos de validez solicitados y aceptados.
+2. Revisar la identidad asociada y las cabeceras de encaminamiento devueltas durante el registro.
+3. Aplicar un filtro por Call-ID para aislar la llamada seleccionada.
+4. Comparar la oferta y la respuesta SDP, incluidos los códecs y las direcciones de recepción anunciadas.
+5. Seguir la respuesta provisional y las actualizaciones de las precondiciones de QoS.
+6. Localizar los mensajes de indicación de llamada, aceptación final, confirmación y liberación.
+7. Identificar los mensajes de eliminación de la vinculación de registro.
+8. Documentar las limitaciones, sin interpretar la señalización como prueba de rendimiento de medios o establecimiento de seguridad.
+
+### 6.3. Topología lógica
+
+![Topología lógica de la llamada IMS sobre acceso 5G](assets/diagrams/ims-call-topology.es.png)
+
+Las cajas representan funciones lógicas, no necesariamente servidores físicos distintos. El diagrama diferencia la evidencia observada en el PCAP o en cabeceras SIP de los elementos incluidos como contexto arquitectónico.
+
 ```text
 UE-A -> gNB-A* -> UPF-A* -> P-CSCF-A -> S-CSCF origen
-   -> [encaminamiento IMS no reconstruido]
-   -> S-CSCF destino* -> P-CSCF-B* -> UPF-B* -> gNB-B* -> UE-B
+  -> [encaminamiento IMS interno no reconstruido]
+  -> S-CSCF destino* -> P-CSCF-B* -> UPF-B* -> gNB-B* -> UE-B
 ```
 
-Asterisco: función contextual no identificada directamente. Los nombres pcscf y scscf origen aparecen en cabeceras; no se asignan automáticamente a hosts físicos. Los accesos pueden compartir nodos. UPF/gNB se incorporan como contexto de arquitectura, no por una IP identificada. No se ha identificado un tramo EPC/SGW. Este es el recorrido lógico de señalización; no representa un camino RTP validado.
+El asterisco (*) identifica una función incluida como contexto arquitectónico, no identificada directamente.
 
-El diagrama PNG preparado debe copiarse a `assets/diagrams/ims-call-topology.png` antes de añadir su enlace de imagen.
+Los nombres `pcscf` y `scscf` de origen aparecen en cabeceras SIP, pero no se han asociado a servidores físicos concretos. Los dos accesos pueden compartir funciones de red.
 
-### Registro y encaminamiento
+Las funciones gNB y UPF se incluyen como contexto arquitectónico; sus direcciones no fueron identificadas. No se identificó un tramo EPC/SGW en el análisis.
 
-El REGISTER 127 solicita 600000 segundos. El 200 del 172 devuelve Contact con expires=3600. P-Associated-URI devuelve identidades, incluido 7200001501. Path contiene pcscf; Service-Route contiene orig@scscf:6060. El INVITE posterior utiliza esa identidad y ruta. Path y Service-Route no se confunden: el primero conserva una ruta hacia el contacto; el segundo informa el recorrido de solicitudes originadas.
+Las flechas representan una secuencia lógica de señalización, no conexiones físicas directas ni un recorrido de medios RTP validado.
 
-### SDP, respuesta fiable y precondiciones
+### 6.4. Registro y encaminamiento
 
-A ofrece EVS, AMR-WB, AMR y eventos, recepción 10.12.109.183:50030. B responde con EVS y telephone-event, recepción 10.12.109.113:50016. Esto describe SDP, no audio validado. El 183 incluye Require:100rel,precondition y RSeq:1; queda pendiente comprobar el RAck del PRACK si se quiere demostrar su correlación exacta.
+La solicitud REGISTER de la trama `127` solicita una validez de registro de `600000` segundos. La respuesta de la trama `172` devuelve un campo `Contact` con `expires=3600`.
 
-En el INVITE, A declara curr local/remote none. En el 183 B exige condiciones obligatorias en ambos lados y conf:qos remote sendrecv. El UPDATE 958 declara local sendrecv y remote none desde A. El 200 UPDATE 969 declara ambos sendrecv desde B. Sigue 180 Ringing, después 200 INVITE, ACK y BYE/200. El 200 UPDATE no equivale a contestar la llamada.
+La respuesta incluye:
 
-### Paquetes de demostración
+- `P-Associated-URI` con la identidad `7200001501`.
+- `Path` con el nombre `pcscf`.
+- `Service-Route` con `orig@scscf:6060`.
 
-| Frame | Message / focus |
+El INVITE posterior utiliza esa identidad y esa ruta.
+
+La información de `Path` conserva una ruta hacia el contacto registrado, mientras que `Service-Route` informa el encaminamiento de las solicitudes originadas por el terminal.
+
+### 6.5. SDP y precondiciones
+
+UE-A ofrece EVS, AMR-WB, AMR y eventos telefónicos, y anuncia recepción en `10.12.109.183:50030`.
+
+UE-B conserva EVS y `telephone-event`, y anuncia recepción en `10.12.109.113:50016`.
+
+Estas son observaciones del SDP, no una validación de que los medios circularan correctamente entre esas direcciones.
+
+La respuesta `183 Session Progress` requiere `100rel` y `precondition`, e incluye `RSeq: 1`. La correlación exacta con la cabecera `RAck` del PRACK no se comprobó.
+
+La secuencia de precondiciones observada es:
+
+1. Los estados actuales iniciales de QoS local y remoto son `none`.
+2. UE-B exige QoS en ambas direcciones y en ambos extremos, y solicita confirmación remota.
+3. El UPDATE de la trama `958` informa de estado local `sendrecv` y remoto `none`, desde la perspectiva de UE-A.
+4. La respuesta `200 OK` al UPDATE de la trama `969` informa de estados local y remoto `sendrecv`, desde la perspectiva de UE-B.
+5. Después aparecen `180 Ringing`, la respuesta final `200 OK` al INVITE, el ACK y el intercambio BYE/200 de liberación.
+
+El `200 OK` al UPDATE confirma esa transacción UPDATE; no constituye la aceptación final del INVITE.
+
+### 6.6. Paquetes de demostración
+
+Los números de trama corresponden a la captura analizada.
+
+| Trama | Mensaje / aspecto relevante |
 |---|---|
 | 127 | REGISTER; IPv6 / UDP / GTP-U / IPv4 / TCP / SIP; QFI 1 |
-| 172 | 200 REGISTER; Contact expires=3600; associated identities and routes |
-| 887 | INVITE; initial SDP offer |
-| 914 | 183; EVS and telephone-event; 100rel; preconditions |
-| 958 | UPDATE; local QoS state becomes sendrecv |
-| 969 | 200 UPDATE; local and remote QoS states sendrecv |
+| 172 | 200 OK al REGISTER; Contact expires=3600; identidades asociadas y rutas |
+| 887 | INVITE; oferta SDP inicial |
+| 914 | 183 Session Progress; EVS y telephone-event; 100rel; precondiciones |
+| 958 | UPDATE; el estado local de QoS pasa a sendrecv |
+| 969 | 200 OK al UPDATE; estados local y remoto de QoS sendrecv |
 | 977 | 180 Ringing |
-| 1334, 1347 | 200 INVITE and ACK |
-| 2331, 2338 | BYE and 200 BYE |
-| 3998, 4009 | Registration binding removal request and acceptance |
+| 1334, 1347 | 200 OK al INVITE y ACK |
+| 2331, 2338 | BYE y 200 OK al BYE |
+| 3998, 4009 | Solicitud y aceptación de eliminación de la vinculación de registro |
+
+Filtro de visualización de Wireshark para la llamada seleccionada:
 
 ```text
 sip.Call-ID == "830828088_169686956@10.12.109.183"
 ```
 
+Filtro de tramas seleccionadas, incluidos mensajes de registro y de llamada:
+
 ```text
 frame.number in {127, 172, 887, 914, 958, 969, 977, 1334, 1347, 2331, 2338, 3998, 4009}
 ```
 
-### Límites del análisis
+### 6.7. Resultados y limitaciones del análisis
 
-No se verificaron RTP, pérdida, jitter, reproducción ni posibles cambios posteriores de códec. No se observa una autenticación IMS-AKA completa. Security-Client anuncia propuestas IPsec; no prueba su establecimiento. No hay ESP en el REGISTER seleccionado; no se generaliza esa ausencia. QFI no equivale a 5QI. Las filas repetidas no se clasifican automáticamente como retransmisiones. El cierre y la eliminación de registro se identificaron en la lista; sus cabeceras completas no fueron inspeccionadas.
+La secuencia de señalización seleccionada documenta el registro, la negociación SDP, los cambios de estado de las precondiciones de QoS, la indicación de llamada, la aceptación y la liberación.
+
+Se aplican las siguientes limitaciones:
+
+- No se validaron la entrega RTP, la pérdida de paquetes, el jitter, la reproducción de audio ni los cambios posteriores de códec.
+- No se observó un intercambio completo de autenticación IMS-AKA.
+- Las propuestas de `Security-Client` no demuestran que se estableciera IPsec.
+- El REGISTER seleccionado no presenta ESP visible; esta observación no se generaliza a toda la captura ni a toda la red.
+- QFI no es el mismo identificador que 5QI.
+- Las observaciones repetidas no se clasifican automáticamente como retransmisiones.
+- Los mensajes de liberación de llamada y eliminación de registro se identificaron en la lista de paquetes, pero no se inspeccionaron sus cabeceras completas.
 
 ## 7. Limitaciones y siguientes mejoras
 
