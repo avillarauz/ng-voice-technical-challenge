@@ -254,15 +254,6 @@ Un único servidor y host físico: sin HA. NGINX tiene una réplica y selección
 
 No ejecutar durante la demostración. Eliminar la aplicación con `sudo kubectl delete -f manifests/lab-web.yaml` también elimina el namespace definido en ese archivo y puede afectar otros recursos dentro de lab. Desinstalar monitoring requiere revisar antes datos, PVC y política de retención; no se propone eliminación automática de volúmenes. Conservar evidencias y backups antes de limpiar.
 
-## 9. Checklist de entrega
-
-- [ ] Confirmar hardware final de las VM y completar registro de instalación K3s.
-- [ ] Añadir diagrama e imágenes revisadas; no publicar identificadores sin autorización.
-- [ ] Revalidar acceso HTTP y visualización de métricas.
-- [ ] Revisar ambos idiomas y ensayar 8–10 minutos de PCAP.
-- [ ] Crear repositorio privado e invitar evaluadores.
-- [ ] Comprobar enlaces y acceso de colaboradores.
-- [ ] Revisar que no haya secretos, kubeconfig ni PCAP original.
 
 ## Referencias técnicas
 
