@@ -106,7 +106,7 @@ La aplicación se consultó desde el navegador del host mediante:
 ![Acceso a NGINX desde el host mediante NodePort](assets/screenshots/nginx.png)
 
 
-### 4.2. Monitorización
+### 4.2. Monitoreo
 El release `monitoring` está deployed, revisión 2, chart `kube-prometheus-stack-93.1.1`, App Version reportada `v0.95.1`. Esa App Version no es la versión individual de cada componente.
 
 Grafana: servidor, una réplica, NodePort 30030, PVC 1Gi. Prometheus: worker, una réplica, ClusterIP, PVC 5Gi, scrape/evaluación 30s, retención 24h y límite por tamaño 2GB. Ambos PVC figuran Bound, RWO, local-path. Alertmanager está deshabilitado. Los monitores de controller manager, etcd, kube-proxy y scheduler están deshabilitados en el chart, no los componentes del clúster.
